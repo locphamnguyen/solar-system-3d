@@ -1,51 +1,120 @@
-<h2 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Interactive 3D solar system simulation in English with real surface textures, rocky asteroid belt, and a detail panel for each selected body.</h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>3D Solar System Simulation</title>
+<style>
+  html, body { margin:0; padding:0; height:100%; background:#06080f; overflow:hidden; font-family:Arial,Helvetica,sans-serif; }
+  #wrap { position:relative; width:100%; height:100%; }
+  canvas { display:block; width:100%; height:100%; cursor:grab; touch-action:none; }
+  #labels { position:absolute; inset:0; pointer-events:none; overflow:hidden; }
+  .corner-btn { position:absolute; top:calc(10px + env(safe-area-inset-top)); width:40px; height:40px; padding:0; font-size:18px; line-height:1; color:#dfe6f5; background:rgba(8,12,24,0.85); border:1px solid rgba(255,255,255,0.3); border-radius:8px; cursor:pointer; z-index:30; }
+  #menuBtn { left:10px; display:none; }
+  #musicBtn { right:10px; font-size:16px; }
+  #panel { position:absolute; top:0; left:0; bottom:0; width:164px; background:rgba(8,12,24,0.92); padding:12px; padding-top:calc(12px + env(safe-area-inset-top)); overflow-y:auto; box-sizing:border-box; z-index:20; transition:transform 0.25s; }
+  #infoPanel { position:absolute; top:0; right:0; bottom:0; width:210px; background:rgba(8,12,24,0.94); padding:14px; padding-top:calc(14px + env(safe-area-inset-top)); overflow-y:auto; box-sizing:border-box; z-index:20; }
+  .lbl-sec { font-size:11px; color:#7c87a3; margin-top:10px; }
+  .chk { display:flex; gap:6px; font-size:12px; color:#c8d1e6; margin:4px 0; align-items:center; cursor:pointer; }
+  .chk input { margin:0; }
+  @media (max-width: 700px) {
+    #menuBtn { display:block; }
+    #panel { width:186px; transform:translateX(-105%); }
+    #panel.open { transform:none; }
+    #infoPanel { width:76%; max-width:250px; display:none; }
+  }
+</style>
+</head>
+<body>
 
-<div id="wrapEn" style="position:relative;background:#06080f;border-radius:12px;overflow:hidden;width:100%;height:780px;font-family:Arial,Helvetica,sans-serif;">
-  <canvas id="spaceEn" style="display:block;width:100%;height:100%;cursor:grab;"></canvas>
-  <div id="labelsEn" style="position:absolute;inset:0;pointer-events:none;overflow:hidden;"></div>
+<audio id="bgm" src="Audio_Solar_system_3d.MP3" loop preload="auto"></audio>
 
-  <div id="panelEn" style="position:absolute;top:0;left:0;bottom:0;width:164px;background:rgba(8,12,24,0.88);padding:12px;overflow-y:auto;box-sizing:border-box;">
+<div id="wrap">
+  <canvas id="space"></canvas>
+  <div id="labels"></div>
+
+  <button id="menuBtn" class="corner-btn" aria-label="Open body list">☰</button>
+  <button id="musicBtn" class="corner-btn" aria-label="Toggle background music">♪</button>
+
+  <div id="panel">
     <div style="font-size:13px;font-weight:bold;color:#dfe6f5;letter-spacing:1px;">SOLAR SYSTEM</div>
-    <div style="font-size:11px;color:#7c87a3;margin-top:8px;">SIMULATION DATE</div>
-    <div id="simDateEn" style="font-size:13px;color:#dfe6f5;margin-bottom:10px;">—</div>
-    <div style="font-size:11px;color:#7c87a3;">TIME CONTROL</div>
+    <div class="lbl-sec" style="margin-top:8px;">SIMULATION DATE</div>
+    <div id="simDate" style="font-size:13px;color:#dfe6f5;margin-bottom:10px;">—</div>
+    <div class="lbl-sec">TIME CONTROL</div>
     <div style="display:flex;align-items:center;gap:6px;margin:4px 0;">
-      <button id="playBtnEn" aria-label="Pause" style="width:34px;height:26px;padding:0;font-size:11px;line-height:1;color:#dfe6f5;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.3);border-radius:6px;cursor:pointer;">❚❚</button>
-      <span id="spdOutEn" style="font-size:12px;color:#dfe6f5;">10 days/s</span>
+      <button id="playBtn" aria-label="Pause" style="width:34px;height:26px;padding:0;font-size:11px;line-height:1;color:#dfe6f5;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.3);border-radius:6px;cursor:pointer;">❚❚</button>
+      <span id="spdOut" style="font-size:12px;color:#dfe6f5;">10 days/s</span>
     </div>
-    <input type="range" id="spdEn" min="0" max="200" step="1" value="10" style="width:100%;" />
-    <div style="font-size:11px;color:#7c87a3;margin-top:10px;">DISPLAY</div>
-    <label style="display:flex;gap:6px;font-size:12px;color:#c8d1e6;margin:4px 0;align-items:center;cursor:pointer;"><input type="checkbox" id="cbOrbitEn" checked style="width:auto;height:auto;margin:0;"/>Orbit lines</label>
-    <label style="display:flex;gap:6px;font-size:12px;color:#c8d1e6;margin:4px 0;align-items:center;cursor:pointer;"><input type="checkbox" id="cbLabelEn" checked style="width:auto;height:auto;margin:0;"/>Labels</label>
-    <label style="display:flex;gap:6px;font-size:12px;color:#c8d1e6;margin:4px 0;align-items:center;cursor:pointer;"><input type="checkbox" id="cbBeltEn" checked style="width:auto;height:auto;margin:0;"/>Asteroid belt</label>
-    <div style="font-size:11px;color:#7c87a3;margin-top:10px;">BODIES</div>
-    <div id="bodyListEn"></div>
-    <div style="font-size:11px;color:#5d6680;margin-top:12px;line-height:1.6;padding-bottom:8px;">Drag = orbit · Scroll = zoom · Click = fly to</div>
+    <input type="range" id="spd" min="0" max="200" step="1" value="10" style="width:100%;" />
+    <div class="lbl-sec">DISPLAY</div>
+    <label class="chk"><input type="checkbox" id="cbOrbit" checked />Orbit lines</label>
+    <label class="chk"><input type="checkbox" id="cbLabel" checked />Labels</label>
+    <label class="chk"><input type="checkbox" id="cbBelt" checked />Asteroid belt</label>
+    <div class="lbl-sec">BODIES</div>
+    <div id="bodyList"></div>
+    <div id="hint" style="font-size:11px;color:#5d6680;margin-top:12px;line-height:1.6;padding-bottom:8px;">Drag = orbit · Scroll = zoom · Click = fly to</div>
   </div>
 
-  <div id="infoPanelEn" style="position:absolute;top:0;right:0;bottom:0;width:210px;background:rgba(8,12,24,0.92);padding:14px;overflow-y:auto;box-sizing:border-box;">
+  <div id="infoPanel">
     <div style="display:flex;justify-content:space-between;align-items:center;">
-      <div id="ipNameEn" style="font-size:16px;font-weight:bold;color:#eef2fb;">Sun</div>
-      <button id="ipCloseEn" aria-label="Close info panel" style="width:24px;height:24px;padding:0;font-size:14px;line-height:1;color:#9aa6c2;border:none;background:transparent;cursor:pointer;">✕</button>
+      <div id="ipName" style="font-size:16px;font-weight:bold;color:#eef2fb;">Sun</div>
+      <button id="ipClose" aria-label="Close info panel" style="width:28px;height:28px;padding:0;font-size:15px;line-height:1;color:#9aa6c2;border:none;background:transparent;cursor:pointer;">✕</button>
     </div>
-    <img id="ipImgEn" alt="" style="width:100%;height:110px;object-fit:cover;border-radius:8px;margin:10px 0;background:#101627;" />
-    <div id="ipDescEn" style="font-size:12px;color:#b6c0d8;line-height:1.65;"></div>
-    <div id="ipStatsEn" style="margin-top:12px;border-top:1px solid rgba(120,140,190,0.3);padding-top:10px;"></div>
+    <img id="ipImg" alt="" style="width:100%;height:100px;object-fit:cover;border-radius:8px;margin:10px 0;background:#101627;" />
+    <div id="ipDesc" style="font-size:12px;color:#b6c0d8;line-height:1.65;"></div>
+    <div id="ipStats" style="margin-top:12px;border-top:1px solid rgba(120,140,190,0.3);padding-top:10px;"></div>
   </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-(function(){
 const TEX = 'https://cdn.jsdelivr.net/gh/KyleGough/solar-system@master/static/textures/';
-const wrap = document.getElementById('wrapEn');
-const canvas = document.getElementById('spaceEn');
-const labelLayer = document.getElementById('labelsEn');
+const wrap = document.getElementById('wrap');
+const canvas = document.getElementById('space');
+const labelLayer = document.getElementById('labels');
 const renderer = new THREE.WebGLRenderer({canvas, antialias:true});
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 4000);
 const loader = new THREE.TextureLoader();
 loader.crossOrigin = 'anonymous';
+
+const mqMobile = window.matchMedia('(max-width: 700px)');
+let isMobile = mqMobile.matches;
+const panel = document.getElementById('panel');
+const ip = document.getElementById('infoPanel');
+const menuBtn = document.getElementById('menuBtn');
+
+function applyLayout(){
+  isMobile = mqMobile.matches;
+  document.getElementById('hint').textContent = isMobile
+    ? '1 finger = orbit · Pinch = zoom · Tap = fly to'
+    : 'Drag = orbit · Scroll = zoom · Click = fly to';
+  if (!isMobile){ panel.classList.remove('open'); ip.style.display = ''; }
+}
+menuBtn.addEventListener('click', () => {
+  const opening = !panel.classList.contains('open');
+  panel.classList.toggle('open');
+  if (opening) ip.style.display = 'none';
+});
+
+const bgm = document.getElementById('bgm');
+const musicBtn = document.getElementById('musicBtn');
+let musicOn = false, userMuted = false;
+function setMusic(on){
+  musicOn = on;
+  musicBtn.style.opacity = on ? '1' : '0.45';
+  musicBtn.style.textDecoration = on ? 'none' : 'line-through';
+  musicBtn.setAttribute('aria-label', on ? 'Mute music' : 'Play music');
+  if (on) bgm.play().catch(()=>{ musicOn = false; musicBtn.style.opacity = '0.45'; });
+  else bgm.pause();
+}
+musicBtn.addEventListener('click', () => { userMuted = musicOn; setMusic(!musicOn); });
+bgm.volume = 0.55;
+bgm.play().then(()=>{ musicOn = true; musicBtn.style.opacity = '1'; }).catch(()=>{
+  musicBtn.style.opacity = '0.45';
+  const kick = () => { if (!userMuted && !musicOn) setMusic(true); window.removeEventListener('pointerdown', kick); };
+  window.addEventListener('pointerdown', kick);
+});
 
 function resize(){
   const w = wrap.clientWidth, h = wrap.clientHeight;
@@ -53,14 +122,14 @@ function resize(){
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   camera.aspect = w/h; camera.updateProjectionMatrix();
 }
-window.addEventListener('resize', resize);
+window.addEventListener('resize', () => { applyLayout(); resize(); });
 
 scene.add(new THREE.AmbientLight(0x46506c, 0.9));
 scene.add(new THREE.PointLight(0xfff2cc, 1.6, 0, 2));
 
 const starGeo = new THREE.BufferGeometry();
 const starPos = [];
-for (let i=0;i<1500;i++){
+for (let i=0;i<1200;i++){
   const r = 900 + Math.random()*800, th = Math.random()*Math.PI*2, ph = Math.acos(2*Math.random()-1);
   starPos.push(r*Math.sin(ph)*Math.cos(th), r*Math.cos(ph), r*Math.sin(ph)*Math.sin(th));
 }
@@ -79,17 +148,13 @@ function makeBody(cfg, parent){
     }
     geo.computeVertexNormals();
   } else {
-    geo = new THREE.SphereGeometry(cfg.r, 40, 28);
+    geo = new THREE.SphereGeometry(cfg.r, 36, 26);
   }
   const mat = cfg.emissive
     ? new THREE.MeshBasicMaterial({color: cfg.color})
     : new THREE.MeshLambertMaterial({color: cfg.color});
   if (cfg.tex){
-    loader.load(TEX + cfg.tex, t => {
-      mat.map = t;
-      mat.color.set(cfg.tint || 0xffffff);
-      mat.needsUpdate = true;
-    });
+    loader.load(TEX + cfg.tex, t => { mat.map = t; mat.color.set(cfg.tint || 0xffffff); mat.needsUpdate = true; });
   }
   const mesh = new THREE.Mesh(geo, mat);
   const pivot = new THREE.Object3D();
@@ -213,12 +278,12 @@ for (let v=0; v<4; v++){
   rockGeos.push(g);
 }
 const rocks = [];
-for (let i=0;i<260;i++){
+const rockCount = isMobile ? 150 : 260;
+for (let i=0;i<rockCount;i++){
   const m = new THREE.Mesh(rockGeos[i%4], rockMat);
   const a = Math.random()*Math.PI*2, r = 74 + Math.random()*16;
   m.position.set(Math.cos(a)*r, (Math.random()-0.5)*2.6, Math.sin(a)*r);
-  const sc = 0.14 + Math.random()*0.42;
-  m.scale.setScalar(sc);
+  m.scale.setScalar(0.14 + Math.random()*0.42);
   m.rotation.set(Math.random()*6.3, Math.random()*6.3, Math.random()*6.3);
   m.userData.spin = (Math.random()-0.5)*2;
   belt.add(m);
@@ -226,14 +291,12 @@ for (let i=0;i<260;i++){
 }
 scene.add(belt);
 
-const list = document.getElementById('bodyListEn');
+const list = document.getElementById('bodyList');
 for (const b of bodies){
   const row = document.createElement('div');
-  row.style.cssText = 'display:flex;align-items:center;gap:6px;padding:3px 6px;margin:1px 0;border-radius:6px;cursor:pointer;font-size:12px;color:#c8d1e6;' + (b.indent? 'margin-left:14px;font-size:11px;color:#9aa6c2;':'');
+  row.style.cssText = 'display:flex;align-items:center;gap:6px;padding:5px 6px;margin:1px 0;border-radius:6px;cursor:pointer;font-size:12px;color:#c8d1e6;' + (b.indent? 'margin-left:14px;font-size:11px;color:#9aa6c2;':'');
   row.innerHTML = '<span style="width:7px;height:7px;border-radius:50%;background:#'+b.color.toString(16).padStart(6,'0')+';flex:none;"></span>' + b.name;
   row.addEventListener('click', () => selectBody(b));
-  row.addEventListener('mouseenter', () => { if (selected !== b) row.style.background = 'rgba(255,255,255,0.07)'; });
-  row.addEventListener('mouseleave', () => { if (selected !== b) row.style.background = ''; });
   b.row = row;
   list.appendChild(row);
   const lbl = document.createElement('div');
@@ -246,18 +309,17 @@ for (const b of bodies){
 let selected = null, camDist = 32, camTheta = 0.8, camPhi = 1.15, targetDist = 32;
 let days = 0, playing = true, speed = 10, showLabels = true;
 const startDate = new Date();
-const ip = document.getElementById('infoPanelEn');
 
 function selectBody(b){
   if (selected) selected.row.style.background = '';
   selected = b;
   b.row.style.background = 'rgba(95,125,220,0.35)';
   targetDist = b.fly;
-  document.getElementById('ipNameEn').textContent = b.name;
-  document.getElementById('ipDescEn').textContent = b.desc || '';
-  const img = document.getElementById('ipImgEn');
+  document.getElementById('ipName').textContent = b.name;
+  document.getElementById('ipDesc').textContent = b.desc || '';
+  const img = document.getElementById('ipImg');
   if (b.tex){ img.src = TEX + b.tex; img.style.display = ''; } else { img.style.display = 'none'; }
-  const st = document.getElementById('ipStatsEn');
+  const st = document.getElementById('ipStats');
   st.innerHTML = '';
   for (const [k,v] of (b.stats||[])){
     const r = document.createElement('div');
@@ -266,23 +328,46 @@ function selectBody(b){
     st.appendChild(r);
   }
   ip.style.display = '';
+  if (isMobile) panel.classList.remove('open');
 }
-document.getElementById('ipCloseEn').addEventListener('click', () => { ip.style.display = 'none'; });
-selectBody(sun);
+document.getElementById('ipClose').addEventListener('click', () => { ip.style.display = 'none'; });
 
-let dragging = false, moved = 0, px = 0, py = 0;
-canvas.addEventListener('pointerdown', e => { dragging = true; moved = 0; px = e.clientX; py = e.clientY; canvas.style.cursor = 'grabbing'; canvas.setPointerCapture(e.pointerId); });
-canvas.addEventListener('pointermove', e => {
-  if (!dragging) return;
-  const dx = e.clientX - px, dy = e.clientY - py;
-  moved += Math.abs(dx) + Math.abs(dy);
-  px = e.clientX; py = e.clientY;
-  camTheta -= dx * 0.006;
-  camPhi = Math.min(Math.PI - 0.15, Math.max(0.15, camPhi - dy * 0.006));
+const pointers = new Map();
+let moved = 0, pinchDist = 0;
+canvas.addEventListener('pointerdown', e => {
+  pointers.set(e.pointerId, {x:e.clientX, y:e.clientY});
+  if (pointers.size === 1) moved = 0;
+  if (pointers.size === 2){
+    const [a,b] = [...pointers.values()];
+    pinchDist = Math.hypot(a.x-b.x, a.y-b.y);
+  }
+  canvas.style.cursor = 'grabbing';
+  canvas.setPointerCapture(e.pointerId);
 });
-canvas.addEventListener('pointerup', e => {
-  dragging = false; canvas.style.cursor = 'grab';
-  if (moved < 6){
+canvas.addEventListener('pointermove', e => {
+  if (!pointers.has(e.pointerId)) return;
+  const prev = pointers.get(e.pointerId);
+  const dx = e.clientX - prev.x, dy = e.clientY - prev.y;
+  pointers.set(e.pointerId, {x:e.clientX, y:e.clientY});
+  moved += Math.abs(dx) + Math.abs(dy);
+  if (pointers.size === 1){
+    camTheta -= dx * 0.006;
+    camPhi = Math.min(Math.PI - 0.15, Math.max(0.15, camPhi - dy * 0.006));
+  } else if (pointers.size === 2){
+    const [a,b] = [...pointers.values()];
+    const d = Math.hypot(a.x-b.x, a.y-b.y);
+    if (pinchDist > 0){
+      targetDist = Math.min(600, Math.max((selected?selected.r:9)*2.5, targetDist * pinchDist / d));
+    }
+    pinchDist = d;
+  }
+});
+function endPointer(e){
+  const wasSingle = pointers.size === 1;
+  pointers.delete(e.pointerId);
+  pinchDist = 0;
+  if (pointers.size === 0) canvas.style.cursor = 'grab';
+  if (wasSingle && moved < 8){
     const rect = canvas.getBoundingClientRect();
     const m = new THREE.Vector2(((e.clientX-rect.left)/rect.width)*2-1, -((e.clientY-rect.top)/rect.height)*2+1);
     const ray = new THREE.Raycaster();
@@ -290,28 +375,34 @@ canvas.addEventListener('pointerup', e => {
     const hits = ray.intersectObjects(bodies.map(b=>b.mesh));
     if (hits.length) selectBody(hits[0].object.userData.body);
   }
-});
+}
+canvas.addEventListener('pointerup', endPointer);
+canvas.addEventListener('pointercancel', endPointer);
 canvas.addEventListener('wheel', e => {
   e.preventDefault();
   targetDist = Math.min(600, Math.max((selected?selected.r:9)*2.5, targetDist * (e.deltaY > 0 ? 1.12 : 0.89)));
 }, {passive:false});
 
-document.getElementById('spdEn').addEventListener('input', e => {
+document.getElementById('spd').addEventListener('input', e => {
   speed = Number(e.target.value);
-  document.getElementById('spdOutEn').textContent = speed + ' days/s';
+  document.getElementById('spdOut').textContent = speed + ' days/s';
 });
-document.getElementById('playBtnEn').addEventListener('click', () => {
+document.getElementById('playBtn').addEventListener('click', () => {
   playing = !playing;
-  const btn = document.getElementById('playBtnEn');
+  const btn = document.getElementById('playBtn');
   btn.textContent = playing ? '❚❚' : '▶';
   btn.style.fontSize = playing ? '11px' : '13px';
   btn.setAttribute('aria-label', playing ? 'Pause' : 'Play');
 });
-document.getElementById('cbOrbitEn').addEventListener('change', e => {
+document.getElementById('cbOrbit').addEventListener('change', e => {
   for (const b of bodies) if (b.orbitLine) b.orbitLine.visible = e.target.checked;
 });
-document.getElementById('cbLabelEn').addEventListener('change', e => { showLabels = e.target.checked; });
-document.getElementById('cbBeltEn').addEventListener('change', e => { belt.visible = e.target.checked; });
+document.getElementById('cbLabel').addEventListener('change', e => { showLabels = e.target.checked; });
+document.getElementById('cbBelt').addEventListener('change', e => { belt.visible = e.target.checked; });
+
+applyLayout();
+selectBody(sun);
+if (isMobile) ip.style.display = 'none';
 
 const tmp = new THREE.Vector3();
 let lastT = null;
@@ -327,7 +418,7 @@ function tick(t){
     belt.rotation.y += (2*Math.PI/1800)*speed*dt;
     for (const r of rocks) r.rotation.y += r.userData.spin*dt;
     const d = new Date(startDate.getTime() + days*86400000);
-    document.getElementById('simDateEn').textContent = d.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+    document.getElementById('simDate').textContent = d.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
   }
   for (const b of bodies) b.mesh.rotation.y += 0.3*dt;
 
@@ -356,5 +447,6 @@ function tick(t){
 }
 resize();
 requestAnimationFrame(tick);
-})();
 </script>
+</body>
+</html>
