@@ -100,6 +100,11 @@ Add a dwarf planet, a comet, or extra moons by appending objects to this array �
 - Planet and moon textures from [KyleGough/solar-system](https://github.com/KyleGough/solar-system), served via jsDelivr — originally sourced from NASA imagery, [Solar System Scope](https://www.solarsystemscope.com/textures/), and [Planet Pixel Emporium](https://planetpixelemporium.com/)
 - Built with [Three.js](https://threejs.org/)
 
+### 🔊 Audio Credits
+
+- **NASA** — *Discovery – Nice to be in orbit* and *Discovery – STS-26 Liftoff*, from [NASA Historical Sounds](https://www.nasa.gov/historical-sounds/)
+- **Scott Buckley** — *'Song Of The Forge'* by Scott Buckley, released under CC-BY 4.0 — [www.scottbuckley.com.au](https://www.scottbuckley.com.au/library/song-of-the-forge/)
+
 ## 📄 License
 
 This project is released under the MIT License — see [LICENSE](./LICENSE) for details. Texture assets remain under their original authors' terms; please review the credited sources above before commercial use.

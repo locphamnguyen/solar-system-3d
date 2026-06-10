@@ -100,6 +100,11 @@ Muốn thêm hành tinh lùn, sao chổi hay vệ tinh mới, chỉ cần thêm 
 - Texture hành tinh và vệ tinh từ [KyleGough/solar-system](https://github.com/KyleGough/solar-system), phân phối qua jsDelivr — nguồn gốc từ ảnh NASA, [Solar System Scope](https://www.solarsystemscope.com/textures/) và [Planet Pixel Emporium](https://planetpixelemporium.com/)
 - Xây dựng với [Three.js](https://threejs.org/)
 
+### 🔊 Bản quyền âm thanh
+
+- **NASA** — *Discovery – Nice to be in orbit* và *Discovery – STS-26 Liftoff*, từ [NASA Historical Sounds](https://www.nasa.gov/historical-sounds/)
+- **Scott Buckley** — *'Song Of The Forge'* của Scott Buckley, phát hành theo giấy phép CC-BY 4.0 — [www.scottbuckley.com.au](https://www.scottbuckley.com.au/library/song-of-the-forge/)
+
 ## 📄 Giấy phép
 
 Dự án phát hành theo giấy phép MIT — xem chi tiết tại [LICENSE](./LICENSE). Các tài nguyên texture vẫn thuộc điều khoản của tác giả gốc; vui lòng xem lại các nguồn được ghi công ở trên trước khi sử dụng cho mục đích thương mại.
