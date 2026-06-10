@@ -8,6 +8,12 @@ An interactive 3D simulation of the solar system that runs entirely in the brows
 
 ![Solar System Simulation](assets/solar_system_3d_english.png)
 
+## 🎥 Demo Video
+
+[![Watch the demo on YouTube](https://img.youtube.com/vi/9mrD3rWLZRU/maxresdefault.jpg)](https://www.youtube.com/watch?v=9mrD3rWLZRU)
+
+> ▶️ Click the image to watch the demo video on YouTube.
+
 ## ✨ Features
 
 - **Full 3D scene** built with Three.js — drag to orbit the camera, scroll to zoom in and out

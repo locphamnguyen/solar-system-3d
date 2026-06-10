@@ -8,6 +8,12 @@ Mô phỏng hệ mặt trời 3D tương tác chạy hoàn toàn trên trình du
 
 ![Mô phỏng Hệ Mặt Trời](assets/solar_system_3d_vietnamese.png)
 
+## 🎥 Video demo
+
+[![Xem video demo trên YouTube](https://img.youtube.com/vi/9mrD3rWLZRU/maxresdefault.jpg)](https://www.youtube.com/watch?v=9mrD3rWLZRU)
+
+> ▶️ Bấm vào ảnh để xem video demo trên YouTube.
+
 ## ✨ Tính năng
 
 - **Không gian 3D đầy đủ** dựng bằng Three.js — kéo chuột để xoay camera, lăn chuột để zoom
